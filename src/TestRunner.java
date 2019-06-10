@@ -5,10 +5,10 @@ public class TestRunner {
         //System.out.println("My name is Adefemi Kolawole. I am a Java developer");
         System.out.println("**Connecting to database**..........");
         try {
-           // MyConnection.connect();
-            MyConnection.connectToTable("students");
+           // DBConnection.connect();
+            DBConnection2.connectToTable("students");
             System.out.println("************************************");
-            MyConnection.connectToTable("teacher");
+            DBConnection2.connectToTable("teacher");
         } catch (SQLException e) {
            // e.printStackTrace();
         }

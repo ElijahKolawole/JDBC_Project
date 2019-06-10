@@ -1,5 +1,5 @@
 import java.sql.*;
-public class MyConnection {
+public class DBConnection2 {
     public static final String USERNAME="root";
     //public static final String PASSWORD="demouser=**";
     public static final String PASSWORD="";
@@ -9,37 +9,29 @@ public class MyConnection {
     private static  ResultSet resultSet = null;
     private static String table = "";
     private static boolean isConnected = false;
-    public MyConnection(){
-    }
-
 
     public static void connect() throws SQLException {
+
         System.out.println("isConnected: " + isConnected);
 
-        //String table = "";
-        //Statement statement = null;
-        //ResultSet resultSet = null;
-        try{
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            isConnected = true;
-            System.out.println("SUCCESS : Connection established!!!" + "\nisConnected: " + isConnected);
+        try(Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)
+        ){
+            DBConnection2.isConnected = true;
+            System.out.println("SUCCESS : Connection established!!!" + "\nisConnected: " + isConnected + ", Current table: "+  table.toUpperCase());
         }
         catch (SQLException e){
             System.out.println("FAILURE: Error in connection" );
             System.err.print(e);
             //e.printStackTrace();
         }
-
     }
-
     public static void connectToTable(String table) throws SQLException {
-        MyConnection.table = table;
+        DBConnection2.table = table;
         //Statement statement = null;
         //ResultSet resultSet = null;
         try{
-           connect(); //to the database
+            connect(); //to the database
             getNumOfRows(table); // to a specific table in the database
-
             //getNumOfRows("teacher");
         }
         catch (SQLException e){
@@ -47,23 +39,23 @@ public class MyConnection {
             System.err.print(e);
             //e.printStackTrace();
         }
-        finally {
-            if (connection != null){
-                connection.close();
-                isConnected=false;
-            }
-            //System.out.println(isConnected);
+
+            System.out.println("isConnected: " + isConnected);
         }
-    }
+
     public static void getNumOfRows(String table) throws  SQLException{
         //connect();
-        MyConnection.table = table;
-        statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        resultSet = statement.executeQuery("SELECT * FROM "+ table);
-        resultSet.last(); //get last line in result set
-        System.out.println("There are currently " + resultSet.getRow() + " rows in "+ table + " table");
+        try(Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM "+ table);){
+            DBConnection2.table = table;
+
+            resultSet.last(); //get last line in result set
+            System.out.println("There are currently " + resultSet.getRow() + " rows in "+ table + " table");
+        }
+        catch (SQLException e){
+            System.out.println("Error_getNumOfRows" + e);
+        }
+
     }
-    public static boolean getIsConnected(){
-        return isConnected;
-    }
+
 }
